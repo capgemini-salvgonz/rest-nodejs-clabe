@@ -21,31 +21,14 @@
 * your programs, too.
 *
 * Autor: salvgonz 
-* Fecha de creación: Feb 13, 2023
+* Fecha de creación: Feb 14, 2023
 */
 
-const express = require('express');
+const { Router } = require('express');
+const { validate, createClabe } = require('../controller/clabe.controller');
+const routes = Router();
 
+routes.post('/clabe/util', validate);
+routes.post('/clabe', createClabe);
 
-class Server {
-
-  constructor() {
-    this.app = express();
-    this.port = process.env.PORT;
-    this.routes();
-  }
-
-  routes() {
-    this.app.get('/', (req, res) => {
-      res.send('Hello World')
-    });
-  }
-
-  listen() {
-    this.app.listen(this.port, () => {
-      console.log('Servidor corriendo en el puerto', this.port);
-    });
-  }
-}
-
-module.exports = Server;
+module.exports = routes;
