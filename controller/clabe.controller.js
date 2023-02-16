@@ -80,7 +80,7 @@ const describeClabe = (clabe = '', res = response) => {
     const [{status}, bank, locations] = result;
     res.status(200).json({ validation: status, bank, locations });
   }).catch(error => {
-    res.status(500).json({ message: "Internal error." });
+    res.status(400).json({ error });
   });
 
 }
