@@ -25,10 +25,10 @@
 */
 
 const { Router } = require('express');
-const { validate, createClabe } = require('../controller/clabe.controller');
+const { util, createClabe } = require('../controller/clabe.controller');
 const routes = Router();
 
-routes.post('/clabe/util', validate);
+routes.post('/clabe/util', util);
 routes.post('/clabe', createClabe);
 
 module.exports = routes;

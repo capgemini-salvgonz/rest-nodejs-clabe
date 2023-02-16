@@ -24,6 +24,8 @@
 * Fecha de creación: Feb 15, 2023
 */
 
+const ClabeDb = require('../db/clabe.db');
+const clabeDb = new ClabeDb();
 const factors = [3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 0];
 
 /*
@@ -59,6 +61,62 @@ const isValid = (clabe = '') => {
   });
 }
 
+/**
+ * Describe la formación de la cuenta clabe
+ * Banco, Ubicación, cuenta y validación de cuenta
+ * @param {*} clabe 
+ */
+const describe = (clabe = "") => {
+  const bank = Number.parseInt(clabe.substring(0, 3));
+  const location = Number.parseInt(clabe.substring(3, 6));
+
+  let status = false;
+  let bankName = '';
+  let locations = [];
+
+  const validPromise = isValid(clabe);
+  const getBankPromise = getBank(bank);
+  const getLocationsPromise = getLocations(location);
+
+  return Promise.all([validPromise, getBankPromise, getLocationsPromise]);
+}
+
+/**
+ * Obtiene el nombre del banco dado un identicador de 
+ * 3 digitos
+ * @param {*} bank 
+ * @returns 
+ */
+const getBank = (bank = 0) => {
+  const query = `SELECT idbank, name FROM bank WHERE idbank = ${bank}`;
+
+  return new Promise((resolve, reject) => {
+    clabeDb.query(query, (error, result, fields) => {
+      result.length === 0
+        ? resolve("N/A")
+        : resolve(result[0].name);
+    });
+  });
+}
+
+/**
+ * Obtiene el nombre de las posibles ubicaciones del banco 
+ * par la cuenta CLABE dada
+ * @param {*} locationCode 
+ * @returns 
+ */
+const getLocations = (locationCode = 0) => {  
+  const query = `SELECT code, name FROM location WHERE code = ${locationCode}`;
+
+  return new Promise((resolve, reject) => {
+    clabeDb.query(query, (error, result, fields) => {
+      const locations = [];
+      result.forEach(element => { locations.push(element.name); });
+      resolve(locations);
+    });
+  });
+}
+
 /* 
 * Crea la cuenta clabe basado en en tres parametros
 *    1) Banco 
@@ -71,12 +129,12 @@ const buildClabe = (bank = 0, location = 0, account = '') => {
       `${bank}`.padStart(3, '0') +
       `${location}`.padStart(3, '0') +
       account.padStart(11, '0');
-    
+
     (isNaN(bank) || isNaN(location) || isNaN(account)
-    || bank >= 1000 || location >= 1000 || account.length >= 12)
-      ? reject({error: "Bad request"})
+      || bank >= 1000 || location >= 1000 || account.length >= 12)
+      ? reject({ error: "Bad request" })
       : resolve(clabe + getVerifierDigit(clabe));
   });
 }
 
-module.exports = { isValid, buildClabe };
+module.exports = { isValid, describe, buildClabe };
