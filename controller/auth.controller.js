@@ -21,27 +21,26 @@
 * your programs, too.
 *
 * Autor: salvgonz 
-* Fecha de creación: Feb 14, 2023
+* Fecha de creación: Feb 17, 2023
 */
 
-const { Router } = require('express');
-const routes = Router();
-const { body, query } = require('express-validator');
-const { util, createClabe } = require('../controller/clabe.controller');
-const badRequest = require('../middleware/badrequest');
+const { request, response } = require('express');
+const {authenticateUser} = require('../service/auth.service');
 
-routes.post('/clabe/util', [
-  query('op').isIn(['validate', 'describe']),
-  body('clabe').isNumeric().withMessage('Is not a number')
-    .isLength({ min: 18, max: 18 }).withMessage('Length must be 18'),
-  badRequest
-], util);
 
-routes.post('/clabe', [
-  body('bank').isNumeric().isLength({ min: 1, max: 3 }),
-  body('location').isNumeric().isLength({ min: 1, max: 3 }),
-  body('account').isNumeric().isLength({ max: 11 }),
-  badRequest
-], createClabe);
+/**
+ * Controlardor para endpoint /v1/api/auth
+ * @param {*} req 
+ * @param {*} res 
+ */
+const authenticate = async (req = request, res = response) => {
+  const {uid, key} = req.body;  
+  try {
+    res.status(200).json(await authenticateUser(uid, key));
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
 
-module.exports = routes;
+module.exports = authenticate;
+

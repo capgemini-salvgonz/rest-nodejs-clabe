@@ -53,7 +53,7 @@ const util = async (req = request, res = response) => {
  * @param {*} clabe 
  * @param {*} res 
  */
-const validateClabe = (clabe = '', res = response) => {
+const validateClabe = async (clabe = '', res = response) => {
   isValid(clabe).then(response => {
     const { status, info } = response;
     res.status(200).json({ status, info });
@@ -68,7 +68,7 @@ const validateClabe = (clabe = '', res = response) => {
  * @param {*} clabe 
  * @param {*} res 
  */
-const describeClabe = (clabe = '', res = response) => {
+const describeClabe = async (clabe = '', res = response) => {
   describe(clabe).then(result => {
     const [{ status }, bank, locations] = result;
     res.status(200).json({ validation: status, bank, locations });
