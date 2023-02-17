@@ -21,27 +21,26 @@
 * your programs, too.
 *
 * Autor: salvgonz 
-* Fecha de creación: Feb 14, 2023
+* Fecha de creación: Feb 16, 2023
 */
 
-const { Router } = require('express');
-const { body, query } = require('express-validator');
-const { util, createClabe } = require('../controller/clabe.controller');
-const routes = Router();
-const badRequest = require('../middleware/badrequest');
+const { request, response } = require('express');
+const { validationResult } = require('express-validator');
 
-routes.post('/clabe/util', [
-  query('op').isIn(['validate', 'describe']),
-  body('clabe').isNumeric().withMessage('Is not a number')
-    .isLength({ min: 18, max: 18 }).withMessage('Length must be 18'),
-  badRequest
-], util);
+/**
+ * Middleware de control de peticiones mal formadas 
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+const badRequest = (req = request, res = response, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
-routes.post('/clabe', [
-  body('bank').isNumeric().isLength({ min: 1, max: 3 }),
-  body('location').isNumeric().isLength({ min: 1, max: 3 }),
-  body('account').isNumeric().isLength({ max: 11 }),
-  badRequest
-], createClabe);
+  next();
+};
 
-module.exports = routes;
+module.exports = badRequest;

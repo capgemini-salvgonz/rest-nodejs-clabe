@@ -70,15 +70,10 @@ const describe = (clabe = "") => {
   const bank = Number.parseInt(clabe.substring(0, 3));
   const location = Number.parseInt(clabe.substring(3, 6));
 
-  let status = false;
-  let bankName = '';
-  let locations = [];
-
-  const validPromise = isValid(clabe);
-  const getBankPromise = getBank(bank);
-  const getLocationsPromise = getLocations(location);
-
-  return Promise.all([validPromise, getBankPromise, getLocationsPromise]);
+  return Promise.all([
+    isValid(clabe), 
+    getBank(bank), 
+    getLocations(location)]);
 }
 
 /**
@@ -129,11 +124,8 @@ const buildClabe = (bank = 0, location = 0, account = '') => {
       `${bank}`.padStart(3, '0') +
       `${location}`.padStart(3, '0') +
       account.padStart(11, '0');
-
-    (isNaN(bank) || isNaN(location) || isNaN(account)
-      || bank >= 1000 || location >= 1000 || account.length >= 12)
-      ? reject({ error: "Bad request" })
-      : resolve(clabe + getVerifierDigit(clabe));
+    
+    resolve(clabe + getVerifierDigit(clabe));
   });
 }
 
