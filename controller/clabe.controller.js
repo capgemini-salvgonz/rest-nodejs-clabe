@@ -34,23 +34,16 @@ const { isValid, describe, buildClabe } = require('../service/clabe.service');
 */
 const util = async (req = request, res = response) => {
   // const params = req.params; Path variables
-  const { op = 'no-option' } = req.query;
-  const { clabe = '0' } = req.body;
+  const { op } = req.query;
+  const { clabe } = req.body;
 
-  if (op === 'no-option' || clabe === '0') {
-    res.status(400).json({
-      message: "Argumentos no validos para esta petición"
-    });
-
-  } else {
-    switch (op) {
-      case 'validate':
-        validateClabe(clabe, res);
-        break;
-      case 'describe':
-        describeClabe(clabe, res);
-        break;
-    }
+  switch (op) {
+    case 'validate':
+      validateClabe(clabe, res);
+      break;
+    case 'describe':
+      describeClabe(clabe, res);
+      break;
   }
 }
 
@@ -77,7 +70,7 @@ const validateClabe = (clabe = '', res = response) => {
  */
 const describeClabe = (clabe = '', res = response) => {
   describe(clabe).then(result => {
-    const [{status}, bank, locations] = result;
+    const [{ status }, bank, locations] = result;
     res.status(200).json({ validation: status, bank, locations });
   }).catch(error => {
     res.status(400).json({ error });
@@ -94,15 +87,12 @@ const describeClabe = (clabe = '', res = response) => {
 */
 const createClabe = async (req = request, res = response) => {
   const { bank, location, account } = req.body;
-  if (bank && location && account) {
-    try {
-      const clabe = await buildClabe(bank, location, account);
-      res.status(200).json({ clabe });
-    } catch (error) {
-      res.status(400).json({ info: "Bad request" });
-    }
-  } else {
-    res.status(400).json({ info: "Propiedades esperadas: bank, location, account" });
+
+  try {
+    const clabe = await buildClabe(bank, location, account);
+    res.status(200).json({ clabe });
+  } catch (error) {
+    res.status(400).json({ info: "Bad request" });
   }
 }
 
