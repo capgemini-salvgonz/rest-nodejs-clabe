@@ -45,6 +45,7 @@ class Server {
 
   routes() {
     this.app.use('/v1/api', require('../routes/clabe.route'));
+    this.app.use('/v1/api', require('../routes/auth.route'));
   }
 
   listen() {
