@@ -21,24 +21,25 @@
 * your programs, too.
 *
 * Autor: salvgonz 
-* Fecha de creación: Feb 18, 2023 
+* Fecha de creación: Feb 18, 2023
 */
 
-const { Router } = require('express');
-const authenticate = require('../controller/auth.controller');
-const { body, check} = require('express-validator');
-const badRequest = require('../middleware/badrequest');
+const { request, response } = require('express');
+const jwt = require('jsonwebtoken');
+const privateKey = process.env.PRIVATE_KEY;
 
-const routes = Router();
 
-routes.post('/auth',[
-  body('uid')
-    .not().isEmpty().withMessage("uid must be provided")
-    .isLength({min: 7}).withMessage("uid min length is 7"),
-  body('key')
-    .not().isEmpty().withMessage("key must be provided")
-    .isLength({min: 8}).withMessage("uid min length is 8"),
-  badRequest
-] ,authenticate);
+const authenticate = (req = request, res = response, next) => {
+  const token = req.get('authorization');
 
-module.exports = routes;
+  try {
+    const jwtPayload = jwt.verify(token, privateKey);
+    req.jwtPayload = jwtPayload;
+  } catch (error) {
+    res.status(401).json({ error });
+  }
+  next();
+};
+
+
+module.exports = authenticate;
