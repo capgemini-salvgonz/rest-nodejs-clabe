@@ -26,22 +26,27 @@
 
 const { Router } = require('express');
 const routes = Router();
-const { body, query } = require('express-validator');
+const { body, query, header } = require('express-validator');
 const { util, createClabe } = require('../controller/clabe.controller');
 const badRequest = require('../middleware/badrequest');
+const authenticate = require('../middleware/authenticate');
 
 routes.post('/clabe/util', [
+  header('Authorization').not().isEmpty().withMessage('Missing auth token'),
   query('op').isIn(['validate', 'describe']),
   body('clabe').isNumeric().withMessage('Is not a number')
     .isLength({ min: 18, max: 18 }).withMessage('Length must be 18'),
-  badRequest
+  badRequest,
+  authenticate
 ], util);
 
 routes.post('/clabe', [
+  header('Authorization').not().isEmpty().withMessage('Missing auth token'),
   body('bank').isNumeric().isLength({ min: 1, max: 3 }),
   body('location').isNumeric().isLength({ min: 1, max: 3 }),
   body('account').isNumeric().isLength({ max: 11 }),
-  badRequest
+  badRequest,
+  authenticate
 ], createClabe);
 
 module.exports = routes;
