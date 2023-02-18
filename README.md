@@ -7,10 +7,10 @@ This project uses the following environment variables:
 | ----------------------------- | ------------------------------------| -----------------------------------------------|
 |CORS           | Cors accepted values        | "*"      |
 |PORT           | Http Server port            | 3000      |
-|DB_USER        | DB user                     | codecom1_clabe |
-|DB_PASSWORD    | DB password                 | 2code.com.mx$ |
-|DB_SCHEMA      | DB schema                   | codecom1_clabe |
-|DB_HOST        | DB hostname                 | 2code.com.mx |
+|DB_USER        | DB user                     | *********** |
+|DB_PASSWORD    | DB password                 | *********** |
+|DB_SCHEMA      | DB schema                   | *********** |
+|DB_HOST        | DB hostname                 | localhost |
 
 # Pre-requisites
 - Install [Node.js](https://nodejs.org/en/) version 18.12.1
